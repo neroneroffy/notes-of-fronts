@@ -1,8 +1,0 @@
-Hook不能在Class组件中使用
-
-useEffect会在每次重新渲染的时候执行
-
-ReactHook使用规则：
-不要在循环、判断中使用hook
-
-React将各个state与各自的useState相关联，靠的是hooks的调用顺序。假设判断中调用了hooks，则无法保证hooks的调用顺序
