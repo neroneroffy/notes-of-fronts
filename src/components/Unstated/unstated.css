@@ -1,0 +1,14 @@
+.unstated {
+    font-size: 20px;
+    margin-top: 50px;
+    padding: 16px;
+    border: 3px solid #dddddd;
+}
+.unstated button {
+    margin-right: 15px;
+}
+.unstated .child1, .unstated .child2 {
+    margin: 8px;
+    padding: 8px;
+    border: 2px solid #d6d6d6;
+}

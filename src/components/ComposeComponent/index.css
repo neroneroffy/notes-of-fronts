@@ -1,0 +1,8 @@
+.tabs {
+    width: 100%;
+    display: flex;
+    text-align: center;
+}
+.tabs h1 {
+    padding: 8px
+}

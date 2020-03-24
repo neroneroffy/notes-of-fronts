@@ -1,0 +1,19 @@
+.redux-counter {
+  border: 1px solid #e4e4e4;
+  padding: 16px;
+}
+.redux-counter-child {
+  margin-bottom: 10px;
+}
+.redux-counter-child button {
+  margin-right: 8px;
+}
+.redux-counter-child>span {
+  margin-left: 16px;
+}
+.redux-sync {
+  margin-top: 16px;
+}
+.redux-sync button {
+  margin-left: 16px;
+}

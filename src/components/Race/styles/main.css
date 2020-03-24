@@ -1,0 +1,14 @@
+.race-main {
+  padding: 50px;
+}
+.project-toggle {
+  margin-bottom: 16px;
+}
+.view {
+  border: 1px solid #ccc;
+  width: 500px;
+  height: 500px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
