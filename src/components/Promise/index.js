@@ -118,13 +118,11 @@ class NewPromise {
         }
       }
       if (state === PENDING) {
-        console.log(123);
         this.successCallback.push(resolveNewPromise)
         this.failureCallback.push(rejectNewPromise)
       }
       // 要保证在当前promise状态改变之后，再去改变新的promise的状态
       if (state === FULFILLED) {
-        console.log(456);
         resolveNewPromise(value)
       }
       if (state === REJECTED) {
@@ -282,3 +280,4 @@ function testPromise() {
 }
 
 export default testPromise
+

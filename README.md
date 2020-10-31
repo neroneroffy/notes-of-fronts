@@ -12,3 +12,4 @@ npm install && npm start
 * Promise原理解析 /src/Promise
 * Reduce函数理解 /src/Reduce
 * 竞态请求的Redux中间件解决方案 /src/Race
+

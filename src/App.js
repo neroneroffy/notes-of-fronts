@@ -6,19 +6,18 @@ import ProviderConsumer from './components/Provider-Consumer'
 import ComposeComponent from './components/ComposeComponent'
 import Unstated from './components/Unstated'
 import ReduxExp from './components/Redux'
-import Hooks from './components/Hooks'
+// import Hooks from './components/Hooks'
 import MacroOrMicroTask from './components/MacroOrMicroTask'
 import testPromise from './components/Promise'
 import reduceExp from './components/Reduce'
 import Race from './components/Race'
-import { ast } from './components/Ast'
+// import { ast } from './components/Ast'
 class App extends Component {
   state={
     count: 0
   }
   componentDidMount() {
     testPromise()
-    ast()
     // reduceExp()
     this.setState((pState, props) => {
       return {count: pState.count + 1}
