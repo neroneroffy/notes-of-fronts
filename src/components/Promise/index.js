@@ -274,10 +274,22 @@ function testPromise() {
   }, reject => {
     console.log(reject);
   })*/
+/*
   new NewPromise(res => res("resolved"))
     .then(value => console.log("resolved then should async", value));
   console.log("this should be consoled first")
+*/
+  const promise1  = new NewPromise(resolve => {
+    resolve(123)
+  })
+  promise1.then(res => {
+    console.log('res1', res)
+  })
+  promise1.then(res => {
+    console.log('res2', res)
+  })
+
 }
 
-export default testPromise
+// export default testPromise
 

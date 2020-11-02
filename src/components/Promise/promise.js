@@ -29,14 +29,17 @@ class Npromise {
         })
       }
     }
-    this.value = resolveVal
-    this.state = FULLFILED
     if (resolveVal instanceof Npromise) {
       resolveVal.then(
-        () => {
+        val => {
+          this.value = val
+          this.state = FULLFILED
           flushSuccessQueue()
         },
-        () => {
+        reason => {
+          this.value = reason
+          this.state = REJECTED
+
           flushFailureQueue()
         }
       )
@@ -120,7 +123,6 @@ class Npromise {
 * 各种值的透传
 * */
 // x 是普通值,promise2被resolved，值为x
-/*
 const promise1 = new Promise((resolve, reject) => {
   resolve('promise1 success')
 })
@@ -131,7 +133,6 @@ const promise2 = promise1.then(res => {
 promise2.then(res => {
   console.log('promise2 res', res)
 })
-*/
 // x 是promise.then,报错
 /*
 const promise1 = new Promise((resolve, reject) => {
