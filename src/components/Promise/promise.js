@@ -95,8 +95,6 @@ class Npromise {
           }
           hasBeenCalled = true
           reject(e)
-        }
-      } else {
         resolve(x)
       }
     }

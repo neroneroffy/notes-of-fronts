@@ -20,36 +20,35 @@ class Npromise {
         // 触发then中的回调
         if (this.state !== PENDING) return
         const flushSuccessQueue = val => {
-            this.state = FULLFILED
-            this.result = val
-
+          this.state = FULLFILED
+          this.result = val
+          setTimeout(() => {
             while (this.successQueue.length) {
-                const callback = this.successQueue.shift()
-                callback(this.result)
+              const callback = this.successQueue.shift()
+              callback(this.result)
             }
+          })
+
         }
         const flushFailureQueue = reason => {
             if (this.state !== PENDING) return
             this.state = REJECTED
             this.result = reason
-
-            while (this.failureQueue.length) {
+            setTimeout(() => {
+              while (this.failureQueue.length) {
                 const callback = this.failureQueue.shift()
                 callback(this.result)
-            }
+              }
+            })
         }
         // 因为value 有可能是promise
         if (value instanceof Npromise) {
             value.then(
                 res => {
-                    setTimeout(() => {
-                        flushSuccessQueue(res)
-                    })
+                  flushSuccessQueue(res)
                 },
                 err => {
-                    setTimeout(() => {
-                        flushFailureQueue(err)
-                    })
+                  flushFailureQueue(err)
                 }
             )
         } else {
@@ -75,13 +74,15 @@ class Npromise {
             }
         })
     }
+
     then(onFullField, onRejected) {
-        // then 将onFullField, onRejected注册到队列中
-        if (this.state === PENDING) {
-            this.successQueue.push(onFullField)
-            this.failureQueue.push(onRejected)
-        }
-        return this
+      // then 将onFullField, onRejected注册到队列中
+
+      if (this.state === PENDING) {
+        this.successQueue.push(onFullField)
+        this.failureQueue.push(onRejected)
+      }
+      return this
     }
 
 }

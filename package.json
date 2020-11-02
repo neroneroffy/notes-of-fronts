@@ -73,7 +73,7 @@
   "scripts": {
     "start": "node scripts/start.js",
     "build": "node scripts/build.js",
-    "test": "node scripts/test.js"
+    "test": "promises-aplus-tests ./src/components/Promise/promiseAPlus.test.js"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -135,6 +135,7 @@
     ]
   },
   "devDependencies": {
-    "@babel/helper-create-regexp-features-plugin": "^7.8.3"
+    "@babel/helper-create-regexp-features-plugin": "^7.8.3",
+    "promises-aplus-tests": "^2.1.2"
   }
 }
