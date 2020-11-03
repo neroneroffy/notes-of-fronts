@@ -1,20 +1,68 @@
+const PENDING = 'PENDING'
 const FULFILLED = 'FULFILLED'
 const REJECTED = 'REJECTED'
-const PENDING = 'PENDING'
+
+function resolvePromise(promise, x, resolve, reject) {
+  if (x === promise) {
+    reject(new TypeError('error'))
+  } else if (x && typeof x === 'object' || typeof x === 'function') {
+    let hasBeenCalled = false
+    try {
+      const then = x.then
+
+      if (typeof then === 'function') {
+        then.call(
+            x,
+            y => {
+              if (hasBeenCalled) {
+                return
+              }
+              hasBeenCalled = true
+              resolvePromise(promise, y, resolve, reject)
+            },
+            r => {
+              if (hasBeenCalled) {
+                return
+              }
+              hasBeenCalled = true
+              reject(r)
+            }
+        )
+      } else {
+        if (hasBeenCalled) {
+          return
+        }
+        hasBeenCalled = true
+        resolve(x)
+      }
+    } catch (e) {
+      if (hasBeenCalled) {
+        return
+      }
+      hasBeenCalled = true
+
+      reject(e)
+    }
+  } else {
+    resolve(x)
+  }
+}
+
 function NewPromise(executor) {
   this.state = PENDING
   this.value = undefined
   this.reason = undefined
+
   this.successQueue = []
   this.failureQueue = []
 
-  const resolve = val => {
+  const resolve = value => {
     if (this.state !== PENDING) {
       return
     }
     this.state = FULFILLED
-    this.value = val
-    this.successQueue.forEach(cb => cb(this.value))
+    this.value = value
+    this.successQueue.forEach(cb => cb())
   }
   const reject = reason => {
     if (this.state !== PENDING) {
@@ -22,7 +70,7 @@ function NewPromise(executor) {
     }
     this.state = REJECTED
     this.reason = reason
-    this.failureQueue.forEach(cb => cb(this.reason))
+    this.failureQueue.forEach(cb => cb())
   }
 
   try {
@@ -31,119 +79,63 @@ function NewPromise(executor) {
     reject(e)
   }
 }
-
 NewPromise.prototype.then = function(onFulfilled, onRejected) {
-
-  const self = this
   const promise = new NewPromise((resolve, reject) => {
     onFulfilled = typeof onFulfilled === 'function' ? onFulfilled : x => x
     onRejected = typeof onRejected === 'function' ? onRejected : x => { throw x }
-    if (self.state === PENDING) {
-      self.successQueue.push(() => {
+
+    if (this.state === PENDING) {
+      this.successQueue.push(() => {
         setTimeout(() => {
           try {
-            const x = onFulfilled(self.value)
+            const x = onFulfilled(this.value)
             resolvePromise(promise, x, resolve, reject)
           } catch (e) {
             reject(e)
           }
         })
       })
-      self.failureQueue.push(() => {
+      this.failureQueue.push(() => {
         setTimeout(() => {
           try {
-            const x = onRejected(self.reason)
+            const x = onRejected(this.reason)
             resolvePromise(promise, x, resolve, reject)
           } catch (e) {
             reject(e)
           }
         })
       })
-    } else if (self.state === FULFILLED) {
+    } else if (this.state === FULFILLED) {
       setTimeout(() => {
         try {
-          const x = onFulfilled(self.value)
+          const x = onFulfilled(this.value)
           resolvePromise(promise, x, resolve, reject)
         } catch (e) {
           reject(e)
         }
       })
-    } else if (self.state === REJECTED) {
+    } else if (this.state === REJECTED) {
       setTimeout(() => {
-        setTimeout(() => {
-          try {
-            const x = onRejected(self.reason)
-            resolvePromise(promise, x, resolve, reject)
-          } catch (e) {
-            reject(e)
-          }
-        })
+        try {
+          const x = onRejected(this.reason)
+          resolvePromise(promise, x, resolve, reject)
+        } catch (e) {
+          reject(e)
+        }
       })
     }
   })
   return promise
 }
 
-function resolvePromise(promise, x, resolve, reject) {
-  let hasCalled = false
-  if (x === promise) {
-    reject(new Error('error'))
-  } else {
-    if (x && typeof x === 'function' || typeof x === 'object') {
-      try {
-        let then = x.then
-        if (typeof then === 'function') {
-          then.call(
-            x,
-            y => {
-              if (hasCalled) {
-                return
-              }
-              hasCalled = true
-              resolvePromise(promise, y, resolve, reject)
-            },
-            z => {
-              if (hasCalled) {
-                return
-              }
-              hasCalled = true
-              reject(z)
-            }
-          )
-        } else {
-          if (hasCalled) {
-            return
-          }
-          hasCalled = true
-          resolve(x)
-        }
-      } catch (e) {
-        if (hasCalled) {
-          return
-        }
-        hasCalled = true
-        reject(e)
-      }
-    } else {
-      resolve(x)
-    }
-  }
-}
-
-const pro = new NewPromise((resolve, reject) => {
-  resolve('success')
+const promise = new NewPromise(resolve => {
+  resolve(123)
 })
-const pro2 = pro.then(res => {
-  console.log('res', res);
-  return {
-    then: () => {
-
-    }
-  }
+promise.then(res => {
+  console.log('res', res)
+  return 345
+}).then(res => {
+  console.log('res2', res)
 })
-pro2.then(res2 => {
-  console.log('res2', res2);
-})
-console.log(pro2);
 
 module.exports = NewPromise
