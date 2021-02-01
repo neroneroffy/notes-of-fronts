@@ -344,26 +344,6 @@ function minStack() {
 
 * */
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 function makeGood() {
   function fn(s) {
     if (!s || s.length === 1) {
@@ -383,4 +363,266 @@ function makeGood() {
   const s = 'leEeetcode'
   console.log(fn(s));
 }
-makeGood()
+// makeGood()
+
+/*
+* 1441. 用栈操作构建数组
+给你一个目标数组 target 和一个整数 n。每次迭代，需要从  list = {1,2,3..., n} 中依序读取一个数字。
+
+请使用下述操作来构建目标数组 target ：
+
+Push：从 list 中读取一个新元素， 并将其推入数组中。
+Pop：删除数组中的最后一个元素。
+如果目标数组构建完成，就停止读取更多元素。
+题目数据保证目标数组严格递增，并且只包含 1 到 n 之间的数字。
+
+请返回构建目标数组所用的操作序列。
+
+题目数据保证答案是唯一的。
+
+示例 1：
+输入：target = [1,3], n = 3
+输出：["Push","Push","Pop","Push"]
+解释：
+读取 1 并自动推入数组 -> [1]
+读取 2 并自动推入数组，然后删除它 -> [1]
+读取 3 并自动推入数组 -> [1,3]
+
+
+示例 2：
+输入：target = [1,2,3], n = 3
+输出：["Push","Push","Push"]
+
+
+示例 3：
+输入：target = [1,2], n = 4
+输出：["Push","Push"]
+解释：只需要读取前 2 个数字就可以停止。
+
+* */
+
+const buildArray = function(target, n) {
+  const res = []
+  const stack = []
+
+  for (let i = 0; i < n; i++) {
+    if (stack.length === target.length) return res
+    stack.push(i + 1)
+    res.push('Push')
+    if (stack[stack.length - 1] !== target[stack.length - 1]) {
+      res.push('Pop')
+      stack.pop()
+    }
+  }
+  return res
+};
+// console.log(buildArray([1, 3], 3));
+
+/*
+* 844. 比较含退格的字符串
+给定 S 和 T 两个字符串，当它们分别被输入到空白的文本编辑器后，判断二者是否相等，并返回结果。 # 代表退格字符。
+
+注意：如果对空文本输入退格字符，文本继续为空。
+
+
+示例 1：
+输入：S = "ab#c", T = "ad#c"
+输出：true
+解释：S 和 T 都会变成 “ac”。
+
+示例 2：
+输入：S = "ab##", T = "c#d#"
+输出：true
+解释：S 和 T 都会变成 “”。
+
+示例 3：
+输入：S = "a##c", T = "#a#c"
+输出：true
+解释：S 和 T 都会变成 “c”。
+
+示例 4：
+输入：S = "a#c", T = "b"
+输出：false
+解释：S 会变成 “c”，但 T 仍然是 “b”。
+*
+* */
+
+const backspaceCompare = function(S, T) {
+  const sStack = []
+  const tStack = []
+
+  for (let i = 0; i < S.length; i++) {
+    if (S[i] === '#') {
+      sStack.pop()
+    } else {
+      sStack.push(S[i])
+    }
+  }
+  for (let i = 0; i < T.length; i++) {
+    if (T[i] === '#') {
+      tStack.pop()
+    } else {
+      tStack.push(T[i])
+    }
+  }
+
+  if (sStack.join() === tStack.join()) {
+    return true
+  }
+  return false
+
+};
+// console.log(backspaceCompare("bxj##tw", "bxo#j##tw"));
+
+const root2 =  {
+  val: "1",
+  left:  {
+    val: "2",
+  },
+  right: {
+    val: "3",
+    right: {
+      val: "4"
+    }
+  }
+};
+
+/*栈实现二叉树的中序遍历*/
+
+const inorderTraversal = function(root) {
+  let cur = root
+  const stack = []
+  const res = []
+  while (cur || stack.length) {
+    while (cur) {
+      stack.push(cur)
+      cur = cur.left
+    }
+    cur = stack.pop()
+    res.push(cur.val)
+    cur = cur.right
+  }
+  return res
+};
+// console.log(inorderTraversal(root2));
+
+/*
+* 921. 使括号有效的最少添加
+给定一个由 '(' 和 ')' 括号组成的字符串 S，我们需要添加最少的括号（ '(' 或是 ')'，可以在任何位置），以使得到的括号字符串有效。
+
+从形式上讲，只有满足下面几点之一，括号字符串才是有效的：
+
+它是一个空字符串，或者
+它可以被写成 AB （A 与 B 连接）, 其中 A 和 B 都是有效字符串，或者
+它可以被写作 (A)，其中 A 是有效字符串。
+给定一个括号字符串，返回为使结果字符串有效而必须添加的最少括号数。
+
+示例 1：
+输入："())"
+输出：1
+
+示例 2：
+输入："((("
+输出：3
+
+示例 3：
+输入："()"
+输出：0
+
+示例 4：
+输入："()))(("
+输出：4
+*
+* */
+
+const minAddToMakeValid = function(S) {
+  if (!S) {
+    return 0
+  }
+  const stack = []
+
+  for (let i = 0; i < S.length; i++) {
+    switch (S[i]) {
+      case '(':
+        stack.push('(')
+        break
+      case ')':
+        if (stack[stack.length - 1] === '(') {
+          stack.pop()
+        } else {
+          stack.push(')')
+        }
+    }
+  }
+  return stack.length
+};
+// console.log(minAddToMakeValid('())'));
+
+/*
+* 946. 验证栈序列
+给定 pushed 和 popped 两个序列，每个序列中的 值都不重复，只有当它们可能是在最初空栈上进行的推入 push
+和弹出 pop 操作序列的结果时，返回 true；否则，返回 false 。
+
+
+示例 1：
+输入：pushed = [1,2,3,4,5], popped = [4,5,3,2,1]
+输出：true
+解释：我们可以按以下顺序执行：
+push(1), push(2), push(3), push(4), pop() -> 4,
+push(5), pop() -> 5, pop() -> 3, pop() -> 2, pop() -> 1
+
+示例 2：
+输入：pushed = [1,2,3,4,5], popped = [4,3,5,1,2]
+输出：false
+解释：1 不能在 2 之前弹出。
+*
+* */
+const validateStackSequences = function(pushed, popped) {
+  const stack = []
+  let j = 0
+  for (let i = 0; i < pushed.length; i++) {
+    stack.push(pushed[i])
+    while (stack[stack.length - 1] === popped[j] && stack.length > 0) {
+      stack.pop()
+      j++
+    }
+  }
+  return !stack.length
+};
+console.log(validateStackSequences([1, 2, 3, 4, 5], [4,5,3,2,1]));
+
+
+/*
+* 503. 下一个更大元素 II
+给定一个循环数组（最后一个元素的下一个元素是数组的第一个元素），输出每个元素的下一个更大元素。数字 x 的下一个更大的元素是按数组遍历顺序，这个数字之后的第一个比它更大的数，这意味着你应该循环地搜索它的下一个更大的数。如果不存在，则输出 -1。
+
+示例 1:
+
+输入: [1,2,1]
+输出: [2,-1,2]
+解释: 第一个 1 的下一个更大的数是 2；
+数字 2 找不到下一个更大的数；
+第二个 1 的下一个最大的数需要循环搜索，结果也是 2。
+注意: 输入数组的长度不会超过 10000。
+*
+* */
+
+const nextGreaterElements = function(nums) {
+  const result = []
+  const totalNums = nums.concat(nums)
+  for (let i = 0, j = 1; i < totalNums.length; i++, j = i + 1) {
+    let cur = nums[i]
+    while (j < totalNums.length) {
+
+      if (cur < totalNums[j]) {
+        cur = totalNums[j]
+        j++
+      } else {
+        cur = -1
+      }
+    }
+    result.push(cur)
+  }
+  return result
+};
+console.log(nextGreaterElements([1, 2, 1]));

@@ -1,4 +1,4 @@
-const NewPromise = require('./promiseStage3')
+const NewPromise = require('./promiseStage5')
 NewPromise.defer = NewPromise.deferred = function () {
   let dfd = {}
   dfd.promise = new NewPromise((resolve, reject) => {

@@ -1,0 +1,56 @@
+/*
+* 有 8 个图片资源的 url，已经存储在数组 urls 中
+* （即urls = [‘http://example.com/1.jpg', …., ‘http://example.com/8.jpg']），
+* 而且已经有一个函数 function loadImg，输入一个 url 链接，返回一个 Promise，
+* 该 Promise 在图片下载完成的时候 resolve，下载失败则 reject。
+但是我们要求，任意时刻，同时下载的链接数量不可以超过 3 个。
+请写一段代码实现这个需求，要求尽可能快速地将所有图片下载完成。
+* */
+
+function loadImg(url) {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      resolve(url)
+    }, 500)
+/*    const img = new Image()
+    img.onload = function () {
+      console.log('一张图片加载完成');
+      resolve(url);
+    }
+    img.onerror = function() {
+      reject(url)
+    }
+    img.src = url*/
+  })
+};
+const urls = [1, 2, 3, 4, 5]
+const loadByLimit = (urlIds, loadImg, limit) => {
+  const urlIdsCopy = [ ...urlIds ]
+
+  if (urlIdsCopy.length <= limit) {
+    // 如果数组长度小于最大并发数，直接全部请求
+    const promiseArray = urlIds.map(urlId => loadImg(urlId))
+    return Promise.all(promiseArray)
+  }
+
+// 注意 splice 方法会改变 urlIdsCopy 数组
+  const promiseArray = urlIdsCopy.splice(0, limit).map(urlId => loadImg(urlId))
+
+  urlIdsCopy.reduce(
+    (prevPromise, urlId) =>
+      prevPromise
+        .then(() => Promise.race(promiseArray))
+        .catch(error => {console.log(error)})
+        .then(resolvedId => {
+          // 将 resolvedId 剔除出 promiseArray 数组
+          // 这里的删除只是伪代码，具体删除情况要看后端 Api 返回结果
+          let resolvedIdPostion = promiseArray.findIndex(id => resolvedId === id)
+          promiseArray.splice(resolvedIdPostion, 1)
+          promiseArray.push(loadImg(urlId))
+        })
+    ,
+    Promise.resolve()
+  )
+    .then(() => Promise.all(promiseArray))
+}
+loadByLimit(urls, loadImg, 3)

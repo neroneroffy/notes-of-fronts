@@ -47,88 +47,10 @@ const BFS = node => {
 }
 // BFS(root)
 
-/*
-* 题目描述：给定一个没有重复数字的序列，返回其所有可能的全排列。
-* 示例：
-输入: [1,2,3]
-输出: [
-[1,2,3],
-[1,3,2],
-[2,1,3],
-[2,3,1],
-[3,1,2],
-[3,2,1]
-]
-* */
-function sort() {
-  const arr = [1, 2, 3]
-  function fn(nums) {
-    const len = arr.length
-    const visited = {}
-    const cur = []
-    const res = []
-
-    function allPermutations(nth) {
-      if (nth === len) {
-        res.push(cur.slice())
-        return
-      }
-      for (let i = 0; i < len; i++) {
-        if (!visited[nums[i]]) {
-          visited[nums[i]] = 1
-          cur.push(nums[i])
-          allPermutations(nth + 1)
-          cur.pop()
-          visited[nums[i]] = 0
-        }
-      }
-    }
-    allPermutations(0)
-    return res
-  }
-  return fn(arr)
-}
-
 // console.log(sort());
 
-/*
-* 题目描述：给定一组不含重复元素的整数数组 nums，返回该数组所有可能的子集（幂集）。
-说明：解集不能包含重复的子集。
 
-示例: 输入: nums = [1,2,3]
-输出:
-[
-[3],
-[1],
-[2],
-[1,2,3],
-[1,3],
-[2,3],
-[1,2],
-[]
-]
-* */
-function subset() {
-  const arr = [1, 2, 3]
-  function fn(nums) {
-    let len = nums.length
-    let res = []
-    let cur = []
-    dfs(0)
-    function dfs(index) {
-      res.push(cur.slice())
-      for (let i = index; i < len; i++) {
-        cur.push(nums[i])
-        dfs(i+1)
-        cur.pop()
-      }
-    }
-    return res
-  }
 
-  console.log(fn(arr));
-}
-// subset()
 
 /*
 * 题目描述：给定一个二叉树，返回它的前序（先序）遍历序列。
@@ -242,7 +164,7 @@ function postOrderByStack2() {
   }
   console.log(fn(root));
 }
-postOrderByStack2()
+// postOrderByStack2()
 function inOrderByStack() {
   const root = {
     val: "1",
@@ -274,3 +196,323 @@ function inOrderByStack() {
   console.log(fn(root));
 }
 // inOrderByStack()
+
+/*
+* 题目描述：给你一个二叉树，请你返回其按 层序遍历 得到的节点值。 （即逐层地，从左到右访问所有节点）。
+*
+* 二叉树：[3,9,20,null,null,15,7],
+
+  3
+ / \
+9  20
+  /  \
+ 15   7
+返回其层次遍历结果：
+
+[
+[3],
+[9,20],
+[15,7]
+]
+
+* */
+
+
+
+function bfsToTree() {
+  const root = {
+    val: "3",
+    left:  {
+      val: "9",
+    },
+    right: {
+      val: "20",
+      left: {
+        val: "15"
+      },
+      right: {
+        val: "7"
+      }
+    }
+  };
+  function fn(root) {
+    const queue = []
+    const res = []
+
+    queue.push(root)
+
+    while (queue.length) {
+      const level = []
+
+      const len = queue.length
+
+      for (let i = 0; i < len; i++) {
+        const top = queue.pop()
+        level.push(top.val)
+        if (top.right) {
+          queue.push(top.right)
+        }
+        if (top.left) {
+          queue.push(top.left)
+        }
+      }
+      res.push(level)
+    }
+    return res
+
+  }
+
+  console.log(fn(root));
+}
+// bfsToTree()
+
+/*
+* 题目描述：翻转一棵二叉树。
+
+示例
+
+输入：
+
+     4
+   /   \
+  2     7
+ / \   / \
+1   3 6   9
+输出：
+
+     4
+   /   \
+  7     2
+ / \   / \
+9   6 3   1
+* */
+
+function invertTree() {
+  const root = {
+    val: "4",
+    left:  {
+      val: "2",
+      left: {
+        val: "1"
+      },
+      right: {
+        val: "3"
+      }
+
+    },
+    right: {
+      val: "7",
+      left: {
+        val: "6"
+      },
+      right: {
+        val: "9"
+      }
+    }
+  };
+  function fn(root) {
+    if (!root) {
+      return root
+    }
+    const left = fn(root.left)
+    const right = fn(root.right)
+
+    root.left = right
+    root.right = left
+    return root
+  }
+
+  console.log(fn(root));
+}
+// invertTree()
+
+// 先序遍历
+const root2 =  {
+  val: "1",
+  left:  {
+    val: "2",
+  },
+  right: {
+    val: "3",
+    right: {
+      val: "4"
+    }
+  }
+};
+function preOrder2(root) {
+  const queue = []
+  const res = []
+
+  queue.push(root)
+  while (queue.length) {
+    const top = queue.pop()
+    res.push(top.val)
+    if (top.right) {
+      queue.push(top.right)
+    }
+    if (top.left) {
+      queue.push(top.left)
+    }
+  }
+  return res
+}
+function postOrder2(root) {
+  const queue = []
+  const res = []
+
+  queue.push(root)
+
+  while (queue.length) {
+    const top = queue.shift()
+    res.unshift(top.val)
+
+    if (top.left) {
+      queue.push(top.left)
+    }
+    if (top.right) {
+      queue.push(top.right)
+    }
+  }
+  return res
+}
+function inOrder(root) {
+  const stack = []
+  const res = []
+
+  let cur = root
+  while (cur || stack.length) {
+    while (cur) {
+      stack.push(cur)
+      cur = cur.left
+    }
+    cur = stack.pop()
+    res.push(cur.val)
+    cur = cur.right
+  }
+  return res
+}
+// console.log(inOrder(root2));
+
+/*
+* 108. 将有序数组转换为二叉搜索树
+将一个按照升序排列的有序数组，转换为一棵高度平衡二叉搜索树。
+
+本题中，一个高度平衡二叉树是指一个二叉树每个节点 的左右两个子树的高度差的绝对值不超过 1。
+
+示例:
+
+给定有序数组: [-10,-3,0,5,9],
+
+一个可能的答案是：[0,-3,9,-10,null,5]，它可以表示下面这个高度平衡二叉搜索树：
+
+      0
+     / \
+   -3   9
+   /   /
+ -10  5
+* */
+function TreeNode(val, left, right) {
+  this.val = (val===undefined ? 0 : val)
+  this.left = (left===undefined ? null : left)
+  this.right = (right===undefined ? null : right)
+}
+
+const sortedArrayToBST = function(nums) {
+  if (!nums.length) {
+    return null
+  }
+
+  function buildBst(min, max) {
+    if (min > max) {
+      return null
+    }
+
+    const mid = Math.floor(min + (max - min) / 2)
+    const cur = new TreeNode(nums[mid])
+    cur.left = buildBst(min, mid - 1)
+    cur.right = buildBst(mid + 1, max)
+
+    return cur
+  }
+
+  const root = buildBst(0, nums.length - 1)
+
+  return root
+};
+// console.log(sortedArrayToBST([-10, -3, 0, 5, 9]));
+
+const bst =  {
+  val: 5,
+  left: {
+    val: 3,
+  },
+  right: {
+    val: 6,
+    right: {
+      val: 8
+    }
+  }
+};
+
+const search = (root, val) => {
+  if (!root) {
+    return null
+  }
+  if (val === root.val) {
+    return root
+  }
+  if (val < root.val) {
+    return search(root.left, val)
+  }
+  if (val > root.val) {
+    return search(root.right, val)
+  }
+}
+// console.log(search(bst, 6));
+
+const insert = (root, val) => {
+  if (!root) {
+    return new TreeNode(val)
+  }
+  if (root.val > val) {
+    root.left = insert(root.left, val)
+  } else if (root.val < val) {
+    root.right = insert(root.right, val)
+  }
+  return root
+}
+
+const deleteNode = (root, val) => {
+  if (!root) {
+    return null
+  }
+  if (root.val === val) {
+    if (!root.left && !root.right) {
+      root = null
+    } else if (root.left) {
+      const maxNode = findMax(root.left)
+      root.val = maxNode.val
+      root.left = deleteNode(root.left, root.val)
+    } else {
+      const minNode = findMin(root.right)
+      root.val = minNode.val
+      root.right = deleteNode(root.right, root.val)
+    }
+  } else if (val > root.val) {
+    deleteNode(root.right)
+  } else {
+    deleteNode(root.left)
+  }
+  function findMax(node) {
+    while (node.right) {
+      node = node.right
+    }
+    return node
+  }
+  function findMin(node) {
+    while (node.left) {
+      node = node.left
+    }
+    return node
+  }
+}

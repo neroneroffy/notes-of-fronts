@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+</head>
+<body>
+  <input id="c"/>
+  <button id="a">A</button>
+  <button id="b">B</button>
+</body>
+</html>
+<script>
+  /*
+  * 页面上有一个输入框，两个按钮，A按钮和B按钮，点击A或者B分别会发送一个异步请求，请求完成后，结果会显示在输入框中。
+  * 题目要求，用户随机点击A和B多次，要求输入框显示结果时，按照用户点击的顺序显示，举例：
+    用户点击了一次A，然后点击一次B，又点击一次A，输入框显示结果的顺序为先显示A异步请求结果，再次显示B的请求结果，最后再次显示A的请求结果。
+  * */
+  const a = document.getElementById('a')
+  const b = document.getElementById('b')
+  const c = document.getElementById('c')
+  let P = Promise.resolve()
+  a.onclick = function (e) {
+    P = P.then(() => {
+      return new Promise(resolve => {
+        setTimeout(() => {
+          console.log(213);
+          c.value = e.target.id
+          resolve()
+        }, 1000)
+      })
+    })
+  }
+  b.onclick = function (e) {
+    P = P.then(() => {
+      return new Promise(resolve => {
+        setTimeout(() => {
+          c.value = e.target.id
+          resolve()
+        }, 2000)
+      })
+    })
+  }
+
+</script>
