@@ -3,9 +3,52 @@
 <head>
   <meta charset="UTF-8">
   <title>Title</title>
+  <style>
+    .box {
+      height: 200px;
+      width: 200px;
+      text-align: center;
+      border: 2px solid black;
+      background-color: #ea5;
+      vertical-align: top;
+    }
+    .overLap{
+      display: inline-block;
+      margin-left: -60px;
+    }
+    .one {
+      margin-left: 0;
+    }
+    .two {
+      margin-top: 30px;
+    }
+    .three {
+      margin-top: 60px;
+    }
+    .positioned {
+      position: relative;
+    }
+    .absolute{
+      position: absolute;
+    }
+    .white{
+      background-color: #fff;
+    }
+    .zIndex1{
+      z-index: 1;
+    }
+    .zIndex2{
+      z-index: 2;
+    }
+  </style>
 </head>
-<body>
 
+<body>
+  <div class="one overLap box">one
+    <div class="white zIndex1 positioned">four</div>
+  </div>
+  <div class="two overLap box positioned">two</div>
+  <div class="three zIndex2 overLap box">three</div>
 </body>
 </html>
 <script src="./index.js"></script>
