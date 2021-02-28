@@ -63,3 +63,93 @@ testApplyOrCallOrBind.newCall(targetObj, 1, 2)
 const binded = testApplyOrCallOrBind.newBind(targetObj, 1, 2)
 binded()
 
+
+// 防抖
+function debounce(fn, delay) {
+  let timeout
+  return function () {
+    clearTimeout(timeout)
+    timeout = setTimeout(() => {
+      fn.call(this, Array.prototype.slice.apply(arguments))
+    }, delay)
+  }
+}
+
+// 节流
+function throttle(fn, interval) {
+  let run = true
+  return function () {
+    if (!run) {
+      return
+    }
+    run = false
+    const self = this
+    const args = arguments
+    setTimeout(function () {
+      fn.apply(self, args)
+      run = true
+    }, interval)
+  }
+}
+
+const mouseContainer = document.getElementById('mouse-container')
+const mouseMoveFn = function (e) {
+  console.log('moving', this, e);
+}
+mouseContainer.onmousemove = throttle(mouseMoveFn, 1000)
+
+// 深拷贝
+
+function deepClone(obj) {
+  let result = {}
+  for (const key in obj) {
+    if (typeof obj[key] === 'object') {
+      result[key] = deepClone(obj[key])
+    } else {
+      result[key] = obj[key]
+    }
+  }
+  return result
+}
+
+// EventBus
+class EventBus {
+  constructor() {
+    this._events = new Map()
+    this._maxListeners = this._maxListeners || 10
+  }
+}
+EventBus.prototype.emit = function (event, ...args) {
+  const handlers = this._events.get(event)
+  if (Array.isArray(handlers) && handlers.length > 0) {
+    for (let i = 0; i < handlers.length; i++) {
+      if (args.length > 0) {
+        handlers[i].apply(this, args)
+      } else {
+        handlers[i].call(this)
+      }
+    }
+  }
+  return true
+}
+EventBus.prototype.addListener = function (type, fn) {
+  const handlers = this._events.get(type)
+  if (handlers && handlers.length) {
+    handlers.push(fn)
+  } else {
+    this._events.set(type, [fn])
+  }
+}
+EventBus.prototype.removeListener = function (type, fn) {
+  const handlers = this._events.get(type)
+  if (handlers && handlers.length) {
+    let matchedPosition = -1
+    for (let i = 0; i < handlers.length; i++) {
+      if (handlers[i] === fn) {
+        matchedPosition = i
+        break
+      }
+    }
+    handlers.splice(matchedPosition, 1)
+  }
+}
