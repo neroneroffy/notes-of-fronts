@@ -23,7 +23,8 @@ function currying(target) {
     return target.apply(null, arguments)
   }
 }
-
+const ad2 = currying(add)
+ad2(1)(2)(3)
 function currying2(target) {
   if (arguments.length - 1 < target.length) {
     return currying2.bind(null, ...arguments)

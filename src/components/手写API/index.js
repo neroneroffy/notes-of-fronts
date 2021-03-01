@@ -13,7 +13,6 @@ function Fruit(type, color) {
 }
 const apple = newFactory(Fruit, 'apple', 'red')
 
-
 // apply
 Function.prototype.newApply = function (context, args) {
   const target = context || window
@@ -48,7 +47,7 @@ Function.prototype.newBind = function (context, ...args) {
     throw new Error('must be invoked with function')
   }
   const fbound = function () {
-    self.apply(this instanceof self ? this : context, args.concat(Array.prototype.slice.call(arguments)))
+    self.apply(this instanceof self ? this : target, args.concat(Array.prototype.slice.call(arguments)))
   }
   if (this.prototype) {
     fbound.prototype = Object.create(this.prototype)
@@ -112,40 +111,42 @@ function deepClone(obj) {
   return result
 }
 
-// EventBus
-class EventBus {
+// EventEmitter
+class EventEmitter {
   constructor() {
     this._events = new Map()
-    this._maxListeners = this._maxListeners || 10
   }
 }
-EventBus.prototype.emit = function (event, ...args) {
-  const handlers = this._events.get(event)
-  if (Array.isArray(handlers) && handlers.length > 0) {
+EventEmitter.prototype.on = function (type, listener, flag) {
+  if (!this._events) {
+    this._events = Object.create(null)
+  }
+  const handlers = this._events.get(type)
+
+  if (handlers) {
+    if (flag) {
+      handlers.unshift(listener)
+    } else {
+      handlers.push(listener)
+    }
+  } else {
+    this._events.set(type, [ listener ])
+  }
+}
+EventEmitter.prototype.emit = function (type, ...args) {
+  const handlers = this._events.get(type)
+  if (handlers) {
     for (let i = 0; i < handlers.length; i++) {
-      if (args.length > 0) {
-        handlers[i].apply(this, args)
-      } else {
-        handlers[i].call(this)
-      }
+      handlers[i](...args)
     }
   }
-  return true
 }
-EventBus.prototype.addListener = function (type, fn) {
+EventEmitter.prototype.off = function (type, fn) {
   const handlers = this._events.get(type)
-  if (handlers && handlers.length) {
-    handlers.push(fn)
-  } else {
-    this._events.set(type, [fn])
-  }
-}
-EventBus.prototype.removeListener = function (type, fn) {
-  const handlers = this._events.get(type)
-  if (handlers && handlers.length) {
+  if (handlers) {
     let matchedPosition = -1
     for (let i = 0; i < handlers.length; i++) {
-      if (handlers[i] === fn) {
+      if (fn === handlers[i] || fn === handlers[i].origin) {
         matchedPosition = i
         break
       }
@@ -153,3 +154,24 @@ EventBus.prototype.removeListener = function (type, fn) {
     handlers.splice(matchedPosition, 1)
   }
 }
+EventEmitter.prototype.once = function (type, listener) {
+  const self = this
+  function only() {
+    listener()
+    self.off(type, only)
+  }
+  // 方便off时比对，当只正好off listeners时，保证它也可以被off掉
+  only.origin = listener
+  self.on(type, only)
+}
+
+const event = new EventEmitter()
+function callRun() {
+  console.log('running')
+}
+
+event.once('run', callRun)
+console.log(event._events);
+event.emit('run')
+event.emit('run')
+console.log(event._events);
